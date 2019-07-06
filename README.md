@@ -40,4 +40,21 @@ step 4: iterate through all rows and columns once
 repeat steps 3 and 4 until solved
 	
 
+updates clues algorithm:
+1. do a deep copy of the existing vector to a new vector
+2. attempt every possible iteration of applying the clues to the existing vector
+	2a. try applying all clues in a naive way - i.e from left to right, while not using any cells marked as EMPTY
+	2b. if the result satisfies the conditions of the clues, it is considered a Possibility - save this possibility
+	2b1. do another deep copy of the existing vector
+	2c. try a different iteration of applying the clues, ex. moving the leftmost clue one unit to the right
+	2d. continue this until all possibilities are exhausted
+	2e. you now have a list of possibilities
+	2f. for each unknown cell, iterate through each possibility - if that cell is either filled or empty in EVERY possibility, then mark it as such in the original vector
+
+
 	
+if clues == 0, fill all ? with x
+if clues > 0, loop: apply leftmost clue in leftmost pos, then recursive call with clues - 1 and deep copy of vector
+					then apply leftmost clue in leftmost-1 pos, then recursive call
+					then apply leftmost clue in leftmost-2 pos, then recursive call
+					continue until remaining spaces = sum(remaing clues) + count(remaining clues) - 1;
