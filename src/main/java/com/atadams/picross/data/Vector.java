@@ -213,8 +213,19 @@ public class Vector {
 		if (!isSolved()) {
 			//here is the meat of the logic of the solver
 			
-			Set<List<Cell.Status>> possibilities = checkClues(copyToCellStatusList(cells), deepCopyInt(clues), 0, new HashSet<List<Cell.Status>>());
+			List<Cell.Status> possibilities = checkClues(copyToCellStatusList(cells), deepCopyInt(clues), 0, null);
 			
+			for (int i = 0; i < possibilities.size(); i++) {
+				if (possibilities.get(i) != Cell.Status.UNKNOWN && cells.get(i).getStatus() != possibilities.get(i)) {
+					try {
+						cells.get(i).updateStatus(possibilities.get(i));	
+					}
+					catch (PicrossSolverException ex) {
+						System.out.println("Unable to update cell: " + ex.getMessage());
+					}					
+				}
+			}
+			/*
 			for (int i = 0; i < cells.size(); i++) {
 				boolean updateCell = true;
 				Cell.Status potentialStatus = null;
@@ -239,11 +250,11 @@ public class Vector {
 						}
 					}
 				}
-			}
+			}*/
 		}
 	}
 	
-	private Set<List<Cell.Status>> checkClues(List<Cell.Status> cells, List<Integer> remainingClues, int startingPos, Set<List<Cell.Status>> possibilities) {
+	private List<Cell.Status> checkClues(List<Cell.Status> cells, List<Integer> remainingClues, int startingPos, List<Cell.Status> possibilities) {
 		if (remainingClues.size() == 0) {
 			for (int i = startingPos; i < cells.size(); i++) {
 				if (cells.get(i) != Cell.Status.FILLED) {
@@ -253,7 +264,8 @@ public class Vector {
 					return possibilities; // failure condition - a cell needs to be marked as EMPTY but it's already FILLED
 				}
 			}
-			possibilities.add(cells); // we found a possibility!
+			possibilities = addPossibilities(possibilities, cells);
+			//possibilities.add(cells); // we found a possibility!
 			
 		}
 		else {
@@ -304,6 +316,18 @@ public class Vector {
 				if (cells.get(i) != Cell.Status.FILLED) {
 					cells.set(i, Cell.Status.EMPTY);
 				}
+			}
+		}
+		return possibilities;
+	}
+	
+	public List<Cell.Status> addPossibilities (List<Cell.Status> possibilities, List<Cell.Status> newPossibility){
+		if (possibilities == null) {
+			return newPossibility;
+		}
+		for (int i = 0; i < possibilities.size(); i++) {
+			if (possibilities.get(i) != newPossibility.get(i)) {
+				possibilities.set(i, Cell.Status.UNKNOWN);
 			}
 		}
 		return possibilities;
