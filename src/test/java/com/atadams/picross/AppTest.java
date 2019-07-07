@@ -1,5 +1,7 @@
 package com.atadams.picross;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,12 +40,26 @@ public class AppTest
 
     /**
      * Rigourous Test :-)
-     */
+    
     public void testApp()
     {
     	Board board = buildBoard();
     	board.solve();
         assertTrue( true );
+    } */
+    
+    public void testEyes()
+    {
+    	try {
+    		Board board = Main.buildBoard(new File("D:\\Class\\Sandbox\\picross-solver\\src\\main\\resources\\sans.txt"));
+    		//Board board = Main.buildBoard(new File("D:\\Class\\Sandbox\\picross-solver\\src\\main\\resources\\swan.txt"));
+    		//Board board = Main.buildBoard(new File("D:\\Class\\Sandbox\\picross-solver\\src\\main\\resources\\eyes.txt"));
+    		//Board board = Main.buildBoard(new File("D:\\Class\\Sandbox\\picross-solver\\src\\main\\resources\\frisk.txt"));
+    		board.solve();
+    	}
+    	catch (IOException ex) {
+    		//idc
+    	}
     }
     
     private Board buildBoard() {

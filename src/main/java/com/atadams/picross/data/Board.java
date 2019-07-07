@@ -40,7 +40,7 @@ public class Board {
 		for (Vector row : rows) {
 			outputString.append(row.toString());
 			outputString.append('\n');
-			for (int i = 0; i < rows.size() * 2; i++) {
+			for (int i = 0; i < columns.size() * 2; i++) {
 				outputString.append('-');
 			}
 			outputString.append('\n');
@@ -52,6 +52,8 @@ public class Board {
 		for (Vector row: rows) {
 			row.applyClues();
 		}
+		System.gc();
+		doUpdate();
 		
 		for (Vector column : columns) {
 			column.applyClues();
