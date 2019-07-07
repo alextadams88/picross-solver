@@ -82,50 +82,51 @@ public class Vector {
 	}
 	
 	public void applyClues() {
-		//here is the meat of the logic of the solver
-		
-		Set<List<Cell>> possibilities = new HashSet<List<Cell>>();
-		checkClues(deepCopy(cells), deepCopyInt(clues), 0, possibilities);
-		
-		for (int i = 0; i < cells.size(); i++) {
-			boolean updateCell = true;
-			Cell.Status potentialStatus = null;
-			if (cells.get(i).getStatus() == Cell.Status.UNKNOWN) {
-				for (List<Cell> possibility : possibilities) {
-					//check each possible application of the clues to see if this cell has the same status in all possibilities
-					Cell possibilityCell = possibility.get(i);
-					if (potentialStatus != null && potentialStatus != possibilityCell.getStatus()) {
-						updateCell = false;
+		if (!isSolved()) {
+			//here is the meat of the logic of the solver
+			
+			Set<List<Cell>> possibilities = checkClues(deepCopy(cells), deepCopyInt(clues), 0, new HashSet<List<Cell>>());
+			
+			for (int i = 0; i < cells.size(); i++) {
+				boolean updateCell = true;
+				Cell.Status potentialStatus = null;
+				if (cells.get(i).getStatus() == Cell.Status.UNKNOWN) {
+					for (List<Cell> possibility : possibilities) {
+						//check each possible application of the clues to see if this cell has the same status in all possibilities
+						Cell possibilityCell = possibility.get(i);
+						if (potentialStatus != null && potentialStatus != possibilityCell.getStatus()) {
+							updateCell = false;
+						}
+						if (potentialStatus == null) {
+							potentialStatus = possibilityCell.getStatus();
+						}
 					}
-					if (potentialStatus == null) {
-						potentialStatus = possibilityCell.getStatus();
-					}
-				}
-
-				if (updateCell) {
-					try {
-						cells.get(i).updateStatus(potentialStatus);
-					}
-					catch (PicrossSolverException ex) {
-						System.out.println("Unable to update cell: " + ex.getMessage());
+	
+					if (updateCell) {
+						try {
+							cells.get(i).updateStatus(potentialStatus);
+						}
+						catch (PicrossSolverException ex) {
+							System.out.println("Unable to update cell: " + ex.getMessage());
+						}
 					}
 				}
 			}
 		}
 	}
 	
-	private void checkClues(List<Cell> cells, List<Integer> remainingClues, int startingPos, Set<List<Cell>> possibilities) {
+	private Set<List<Cell>> checkClues(List<Cell> cells, List<Integer> remainingClues, int startingPos, Set<List<Cell>> possibilities) {
 		if (remainingClues.size() == 0) {
 			for (int i = startingPos; i < cells.size(); i++) {
 				if (cells.get(i).getStatus() != Cell.Status.FILLED) {
 					cells.get(i).setStatus(Cell.Status.EMPTY);
 				}
 				else {
-					return; // failure condition - a cell needs to be marked as EMPTY but it's already FILLED
+					return possibilities; // failure condition - a cell needs to be marked as EMPTY but it's already FILLED
 				}
 			}
 			possibilities.add(cells); // we found a possibility!
-			return;
+			
 		}
 		else {
 			int clueSum = 0;
@@ -135,11 +136,11 @@ public class Vector {
 			int endingPosition = cells.size() - clueSum - remainingClues.size() + 1 + 1;
 			//int endingPosition = clueSum + remainingClues.size() - 1;
 			for (int i = startingPos; i < endingPosition; i++) {
+				//check if the previous square is FILLED, if it is, this is not valid and in fact we need to stop
+				if (i > 0 && cells.get(i - 1).getStatus() == Cell.Status.FILLED) {
+					break;
+				}
 				if (cells.get(i).getStatus() != Cell.Status.EMPTY) {
-					//check if the previous square is FILLED, if it is, this is not valid and in fact we need to stop
-					if (i > 0 && cells.get(i - 1).getStatus() == Cell.Status.FILLED) {
-						break;
-					}
 					//attempt to apply the clue here
 					boolean operationSuccess = true;
 					List<Cell> cellsCopy = deepCopy(cells);
@@ -149,6 +150,7 @@ public class Vector {
 						}
 						else {
 							operationSuccess = false;
+							break;
 						}
 					}
 					if (operationSuccess && remainingClues.size() > 1) {
@@ -167,7 +169,7 @@ public class Vector {
 						if (cluesCopy.size() > 0) {
 							newPosition++;
 						}
-						checkClues(cellsCopy, cluesCopy, newPosition, possibilities);
+						possibilities = checkClues(cellsCopy, cluesCopy, newPosition, possibilities);
 						//we were able to apply the first clue so do the recursive call
 					}
 				}
@@ -176,5 +178,6 @@ public class Vector {
 				}
 			}
 		}
+		return possibilities;
 	}
 }
