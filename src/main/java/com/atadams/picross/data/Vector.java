@@ -107,7 +107,7 @@ public class Vector {
 						cells.get(i).updateStatus(potentialStatus);
 					}
 					catch (PicrossSolverException ex) {
-						System.out.println("YOUR ERROR IS HERE BIG DUMMY!!!!");
+						System.out.println("Unable to update cell: " + ex.getMessage());
 					}
 				}
 			}

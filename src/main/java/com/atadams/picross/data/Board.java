@@ -22,27 +22,17 @@ public class Board {
 	public void solve() {
 		int iterationCount = 0;
 		System.out.println(this);
-		try {
-			Thread.sleep(1000);
-		}
-		catch (Exception ex) {
-			//who cares
-		}
-		while (!isSolved() || iterationCount >= 1000) {
+		long startTime = System.nanoTime();
+		while (!isSolved()) {
 			iterateClues();
 			doUpdate();
 			System.out.println(this);
-			try {
-				Thread.sleep(1000);
-			}
-			catch (Exception ex) {
-				//who cares
-			}
-			iterationCount++;
 		}
-		if (iterationCount >= 1000) {
-			System.out.println("You looped infinitely, you big dummy.");
-		}
+		long timeElapsed = System.nanoTime() - startTime;
+		System.out.println("Execution time in nanoseconds  : " + timeElapsed);
+
+		System.out.println("Execution time in milliseconds : " + 
+								timeElapsed / 1000000);
 	}
 	
 	public String toString() {
