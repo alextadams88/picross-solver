@@ -52,8 +52,6 @@ public class Board {
 		for (Vector row: rows) {
 			row.applyClues();
 		}
-		System.gc();
-		doUpdate();
 		
 		for (Vector column : columns) {
 			column.applyClues();

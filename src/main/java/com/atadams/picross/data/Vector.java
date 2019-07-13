@@ -107,108 +107,6 @@ public class Vector {
 		return copy;
 	}
 	
-	/*
-	public void applyClues() {
-		if (!isSolved()) {
-			//here is the meat of the logic of the solver
-			
-			Set<List<Cell>> possibilities = checkClues(deepCopy(cells), deepCopyInt(clues), 0, new HashSet<List<Cell>>());
-			
-			for (int i = 0; i < cells.size(); i++) {
-				boolean updateCell = true;
-				Cell.Status potentialStatus = null;
-				if (cells.get(i).getStatus() == Cell.Status.UNKNOWN) {
-					for (List<Cell> possibility : possibilities) {
-						//check each possible application of the clues to see if this cell has the same status in all possibilities
-						Cell possibilityCell = possibility.get(i);
-						if (potentialStatus != null && potentialStatus != possibilityCell.getStatus()) {
-							updateCell = false;
-						}
-						if (potentialStatus == null) {
-							potentialStatus = possibilityCell.getStatus();
-						}
-					}
-	
-					if (updateCell) {
-						try {
-							cells.get(i).updateStatus(potentialStatus);
-						}
-						catch (PicrossSolverException ex) {
-							System.out.println("Unable to update cell: " + ex.getMessage());
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	private Set<List<Cell>> checkClues(List<Cell> cells, List<Integer> remainingClues, int startingPos, Set<List<Cell>> possibilities) {
-		if (remainingClues.size() == 0) {
-			for (int i = startingPos; i < cells.size(); i++) {
-				if (cells.get(i).getStatus() != Cell.Status.FILLED) {
-					cells.get(i).setStatus(Cell.Status.EMPTY);
-				}
-				else {
-					return possibilities; // failure condition - a cell needs to be marked as EMPTY but it's already FILLED
-				}
-			}
-			possibilities.add(cells); // we found a possibility!
-			
-		}
-		else {
-			int clueSum = 0;
-			for (Integer clue : remainingClues) {
-				clueSum += clue;
-			}
-			int endingPosition = cells.size() - clueSum - remainingClues.size() + 1 + 1;
-			//int endingPosition = clueSum + remainingClues.size() - 1;
-			for (int i = starti)ngPos; i < endingPosition; i++) {
-				//check if the previous square is FILLED, if it is, this is not valid and in fact we need to stop
-				if (i > 0 && cells.get(i - 1).getStatus() == Cell.Status.FILLED) {
-					break;
-				}
-				if (cells.get(i).getStatus() != Cell.Status.EMPTY) {
-					//attempt to apply the clue here
-					boolean operationSuccess = true;
-					List<Cell> cellsCopy = deepCopy(cells);
-					for (int j = 0; j < remainingClues.get(0); j++) {
-						if (cellsCopy.get(j + i).getStatus() != Cell.Status.EMPTY) {
-							cellsCopy.get(j + i).setStatus(Cell.Status.FILLED);
-						}
-						else {
-							operationSuccess = false;
-							break;
-						}
-					}
-					if (operationSuccess && remainingClues.size() > 1) {
-						//if there are more clues left we need to add a separator space
-						if (cells.get(i + remainingClues.get(0)).getStatus() != (Cell.Status.FILLED)) {
-							cellsCopy.get(i + remainingClues.get(0)).setStatus(Cell.Status.EMPTY);
-						}
-						else {
-							operationSuccess = false;
-						}
-					}
-					if (operationSuccess) {
-						List<Integer> cluesCopy = deepCopyInt(remainingClues);
-						cluesCopy.remove(0);
-						int newPosition = (i + remainingClues.get(0));
-						if (cluesCopy.size() > 0) {
-							newPosition++;
-						}
-						possibilities = checkClues(cellsCopy, cluesCopy, newPosition, possibilities);
-						//we were able to apply the first clue so do the recursive call
-					}
-				}
-				if (cells.get(i).getStatus() != Cell.Status.FILLED) {
-					cells.get(i).setStatus(Cell.Status.EMPTY);
-				}
-			}
-		}
-		return possibilities;
-	}
-	*/
-	
 	public void applyClues() {
 		if (!isSolved()) {
 			//here is the meat of the logic of the solver
@@ -225,32 +123,6 @@ public class Vector {
 					}					
 				}
 			}
-			/*
-			for (int i = 0; i < cells.size(); i++) {
-				boolean updateCell = true;
-				Cell.Status potentialStatus = null;
-				if (cells.get(i).getStatus() == Cell.Status.UNKNOWN) {
-					for (List<Cell.Status> possibility : possibilities) {
-						//check each possible application of the clues to see if this cell has the same status in all possibilities
-						Cell.Status possibilityCell = possibility.get(i);
-						if (potentialStatus != null && potentialStatus != possibilityCell) {
-							updateCell = false;
-						}
-						if (potentialStatus == null) {
-							potentialStatus = possibilityCell;
-						}
-					}
-	
-					if (updateCell) {
-						try {
-							cells.get(i).updateStatus(potentialStatus);
-						}
-						catch (PicrossSolverException ex) {
-							System.out.println("Unable to update cell: " + ex.getMessage());
-						}
-					}
-				}
-			}*/
 		}
 	}
 	
@@ -274,7 +146,6 @@ public class Vector {
 				clueSum += clue;
 			}
 			int endingPosition = cells.size() - clueSum - remainingClues.size() + 1 + 1;
-			//int endingPosition = clueSum + remainingClues.size() - 1;
 			for (int i = startingPos; i < endingPosition; i++) {
 				//check if the previous square is FILLED, if it is, this is not valid and in fact we need to stop
 				if (i > 0 && cells.get(i - 1) == Cell.Status.FILLED) {
